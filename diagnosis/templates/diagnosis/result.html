@@ -1,0 +1,196 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="container-fluid p-0">
+
+    <!-- Header Section -->
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Analysis Report</h2>
+            <p class="page-subtitle">AI-generated diagnostic assessment for Patient {{ scan.patient_id }}</p>
+        </div>
+        <div>
+            <a href="{{ scan.scan_file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary me-2">
+                <i class="fa-solid fa-download"></i> Check File
+            </a>
+            
+            <a href="{% url 'generate_pdf' scan.id %}" class="btn-outline bg-white">
+                <i class="fa-solid fa-file-pdf me-2"></i> Download PDF
+            </a>
+            <a href="{% url 'upload' %}" class="btn-clinical ms-2">
+                Analyze Next
+            </a>
+        </div>
+    </div>
+
+    <!-- TOP ROW: Details & Prediction -->
+    <div class="row mb-4">
+        <!-- Patient Details -->
+        <div class="col-md-4">
+            <div class="medical-card h-100">
+                <div class="card-header-clean">
+                    <span>Patient Profile</span>
+                    <i class="fa-solid fa-user text-muted"></i>
+                </div>
+                <div class="card-body-clean">
+                    <h1 class="display-6 fw-bold mb-1">{{ scan.patient_id }}</h1>
+                    <p class="text-muted mb-4">{{ scan.age }} Years Old</p>
+                    
+                    <div class="p-3 bg-light rounded-3 mb-3">
+                        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Scan File</small>
+                        <div class="d-flex align-items-center mt-1">
+                            <i class="fa-solid fa-file-medical text-primary me-2"></i>
+                            <span class="text-truncate">{{ scan.scan_file.name }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-3 bg-light rounded-3">
+                        <small class="text-uppercase text-muted fw-bold" style="font-size: 0.7rem;">Analysis Date</small>
+                        <div class="mt-1">{{ scan.uploaded_at }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Prediction & Chart -->
+        <div class="col-md-8">
+            <div class="medical-card h-100">
+                <div class="card-header-clean">
+                    <span>Model Inference</span>
+                    <i class="fa-solid fa-robot text-muted"></i>
+                </div>
+                <div class="card-body-clean">
+                    <div class="row align-items-center h-100">
+                        <!-- Text Result -->
+                        <div class="col-md-6 text-center border-end">
+                            <h5 class="text-muted text-uppercase small fw-bold mb-3">Classification Result</h5>
+                            
+                            {% if scan.prediction == "Parkinson's Disease" %}
+                                <div class="badge-pill badge-danger mb-3 px-4 py-2">POSITIVE DETECTED</div>
+                                <h2 class="text-danger fw-bold mb-2">Parkinson's Disease</h2>
+                                <p class="text-muted small px-4">The model has identified biomarkers consistent with early-stage PD pathology.</p>
+                            {% else %}
+                                <div class="badge-pill badge-success mb-3 px-4 py-2">NEGATIVE</div>
+                                <h2 class="text-success fw-bold mb-2">Healthy Control</h2>
+                                <p class="text-muted small px-4">No significant PD biomarkers were detected in this scan.</p>
+                            {% endif %}
+                        </div>
+
+                        <!-- Chart -->
+                        <div class="col-md-6">
+                            <div style="height: 220px; width: 100%; position: relative;">
+                                <canvas id="confidenceChart"></canvas>
+                            </div>
+                            <p class="text-center mt-3 small text-muted">Confidence Score: <strong>{{ scan.confidence }}%</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM ROW: 3D Visualization -->
+    <div class="row">
+        <div class="col-12">
+            <div class="medical-card">
+                <div class="card-header-clean text-white" style="background: #1e293b; border: none; display: flex; justify-content: space-between; align-items: center;">
+                    <span><i class="fa-solid fa-cube me-2"></i> Interactive 3D Viewer</span>
+                    <div>
+                        <button onclick="loadStandardBrain()" class="btn btn-sm btn-light text-dark me-2">
+                            <i class="fa-solid fa-wrench"></i> Test Standard Brain
+                        </button>
+                        <small class="opacity-50">Left Click: Rotate | Right Click: Pan</small>
+                    </div>
+                </div>
+                <div class="card-body p-0 bg-black" style="height: 600px; position: relative;">
+                    <canvas id="canvas" style="width: 100%; height: 100%;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="https://niivue.github.io/niivue/features/niivue.umd.js"></script>
+<script>
+    let nv;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- 1. Chart Configuration ---
+        const rawConfidence = "{{ scan.confidence|default:0 }}";
+        const scanConfidence = parseFloat(rawConfidence);
+        const uncertaintyScore = 100 - scanConfidence;
+        const isPDDetected = "{{ scan.prediction }}" === "Parkinson's Disease";
+        const chartColor = isPDDetected ? '#ef4444' : '#10b981';
+
+        const ctx = document.getElementById('confidenceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Confidence', 'Uncertainty'],
+                datasets: [{
+                    data: [scanConfidence, uncertaintyScore],
+                    backgroundColor: [chartColor, '#f1f5f9'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%',
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // --- 2. 3D Viewer Logic ---
+        try {
+            nv = new niivue.Niivue({
+                dragAndDropEnabled: false,
+                backColor: [0, 0, 0, 1],
+                show3Dcrosshair: true,
+                loadingText: 'Loading Brain Scan...',
+            });
+            
+            nv.attachTo('canvas');
+            
+            const fileUrl = "{{ scan.scan_file.url }}";
+            console.log("Attempting to load MRI from:", fileUrl);
+
+            const volumeList = [
+                {
+                    url: fileUrl,
+                    colorMap: "gray",
+                    opacity: 1,
+                    visible: true,
+                    // Contrast fix for mock/processed data
+                    cal_min: 0,
+                    cal_max: 150 
+                },
+            ];
+            
+            nv.loadVolumes(volumeList).catch(err => {
+                console.error("Niivue failed to load volume:", err);
+            });
+            
+            nv.setSliceType(nv.sliceTypeMultiplanar);
+            
+        } catch (error) {
+            console.error("Niivue Initialization Error:", error);
+        }
+    });
+
+    function loadStandardBrain() {
+        console.log("Loading Standard MNI Brain for debugging...");
+        const volumeList = [{
+            url: "https://niivue.github.io/niivue/images/mni152.nii.gz",
+            colorMap: "gray",
+            opacity: 1,
+            visible: true,
+        }];
+        nv.loadVolumes(volumeList);
+    }
+</script>
+{% endblock %}

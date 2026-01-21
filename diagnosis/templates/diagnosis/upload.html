@@ -1,0 +1,55 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-md-7">
+        
+        <div class="text-center mb-5">
+            <h2 class="mb-2">New Diagnostic Analysis</h2>
+            <p class="text-muted">Upload preprocessed fMRI (NIfTI) data for deep learning inference.</p>
+        </div>
+
+        <div class="medical-card">
+            <div class="card-body-clean p-5">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-uppercase small fw-bold text-muted mb-2">Patient ID</label>
+                            <input type="text" name="patient_id" class="form-control form-control-lg bg-light border-0" placeholder="e.g. PAT-001" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-uppercase small fw-bold text-muted mb-2">Age</label>
+                            <input type="number" name="age" class="form-control form-control-lg bg-light border-0" placeholder="Years" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="form-label text-uppercase small fw-bold text-muted mb-2">MRI Scan File</label>
+                        <div class="upload-wrapper">
+                            <input type="file" name="scan_file" accept=".nii,.nii.gz,.gz" class="upload-input" style="z-index: 10;" required onchange="document.getElementById('filename-display').innerText = this.files[0].name; document.getElementById('upload-icon').classList.replace('text-secondary', 'text-primary');">
+                            
+                            <div class="pointer-events-none">
+                                <i id="upload-icon" class="fa-solid fa-cloud-arrow-up fa-3x text-secondary mb-3 transition-colors"></i>
+                                <h5 class="fw-bold mb-1">Drop NIfTI file here</h5>
+                                <p class="text-muted small mb-0">or click area to browse computer</p>
+                                <p id="filename-display" class="mt-3 text-primary fw-bold small"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-clinical w-100 py-3 text-uppercase letter-spacing-1">
+                        <i class="fa-solid fa-bolt me-2"></i> Run Inference Model
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <p class="text-center text-muted small mt-4">
+            <i class="fa-solid fa-shield-halved me-1"></i> Data processing is compliant with HIPAA & GDPR regulations.
+        </p>
+
+    </div>
+</div>
+{% endblock %}

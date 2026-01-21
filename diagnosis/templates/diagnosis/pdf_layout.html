@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+            @frame footer_frame {
+                -pdf-frame-content: footerContent;
+                bottom: 1cm;
+                margin-left: 2cm;
+                margin-right: 2cm;
+                height: 1cm;
+            }
+        }
+        
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11pt;
+            color: #334155;
+            line-height: 1.4;
+        }
+        .header-strip {
+            background-color: #0f172a; 
+            color: white;
+            padding: 25px;
+            border-radius: 6px;
+            margin-bottom: 35px;
+        }
+
+        .brand {
+            font-size: 22pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sub-brand {
+            font-size: 10pt;
+            opacity: 0.7;
+            margin-top: 5px;
+            font-weight: lighter;
+        }
+
+        .section-title {
+            color: #2563eb;
+            font-size: 14pt;
+            font-weight: bold;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            margin-top: 30px;
+            text-transform: uppercase;
+        }
+        .info-table {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .info-table td {
+            padding-bottom: 15px;
+            vertical-align: top;
+        }
+
+        .label {
+            font-size: 9pt;
+            color: #64748b; 
+            text-transform: uppercase;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .value {
+            font-size: 12pt;
+            color: #0f172a;
+            font-weight: normal;
+        }
+        .result-card {
+            background-color: #f8fafc;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-badge-pd {
+            color: #ef4444; 
+            font-size: 26pt;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .result-badge-control {
+            color: #10b981; 
+            font-size: 26pt;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+
+        .confidence-wrapper {
+            margin-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 15px;
+            display: inline-block;
+        }
+
+        .disclaimer-box {
+            background-color: #fffbeb; 
+            color: #92400e;
+            padding: 10px;
+            font-size: 9pt;
+            border-radius: 4px;
+            margin-top: 40px;
+            border: 1px solid #fcd34d;
+        }
+
+        #footerContent {
+            color: #94a3b8;
+            font-size: 8pt;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-strip">
+        <div class="brand">NeuroDetect</div>
+        <div class="sub-brand">Automated fMRI Diagnostic Assessment Report</div>
+    </div>
+
+    <div class="section-title">Patient Profile</div>
+    
+    <table class="info-table">
+        <tr>
+            <td width="33%">
+                <div class="label">Patient Identifier</div>
+                <div class="value">{{ scan.patient_id }}</div>
+            </td>
+            <td width="33%">
+                <div class="label">Subject Age</div>
+                <div class="value">{{ scan.age }} Years</div>
+            </td>
+            <td width="33%">
+                <div class="label">Analysis Date</div>
+                <div class="value">{{ scan.uploaded_at|date:"F d, Y" }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-table">
+        <tr>
+            <td>
+                <div class="label">Source Filename</div>
+                <div class="value">{{ scan.scan_file.name }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">Diagnostic Inference</div>
+
+    <div class="result-card">
+        <div class="label" style="margin-bottom: 10px;">Primary Classification</div>
+        
+        {% if scan.prediction == "Parkinson's Disease" %}
+            <div class="result-badge-pd">POSITIVE DETECTED</div>
+            <div style="font-size: 11pt; color: #7f1d1d;">Patterns consistent with Parkinson's Disease pathology identified.</div>
+        {% else %}
+            <div class="result-badge-control">HEALTHY CONTROL</div>
+            <div style="font-size: 11pt; color: #064e3b;">No significant pathological biomarkers detected.</div>
+        {% endif %}
+
+        <div class="confidence-wrapper">
+            <span class="label">Model Confidence Score:</span>
+            <span style="font-size: 14pt; font-weight: bold; margin-left: 10px; color: #334155;">{{ scan.confidence }}%</span>
+        </div>
+    </div>
+    <div style="margin-top: 30px;">
+        <div class="label">Methodology Note</div>
+        <p style="font-size: 10pt; color: #475569; margin-top: 5px;">
+            This analysis utilizes a Support Vector Machine (SVM) classifier trained on functional connectivity matrices derived from resting-state fMRI data (PPMI Dataset). The preprocessing pipeline includes motion correction, slice-timing correction, and spatial normalization to MNI152 space.
+        </p>
+    </div>
+
+    <div class="disclaimer-box">
+        <strong>IMPORTANT:</strong> This report is generated by an Artificial Intelligence system for research purposes only. 
+        It does not constitute a definitive medical diagnosis. All results should be reviewed by a qualified neurologist.
+    </div>
+
+    <div id="footerContent">
+        West University of Timisoara • Computer Science Thesis 2025 • Generated by NeuroDetect AI
+        <br>
+        Page <pdf:pagenumber>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+/* -------------------------------------------------------------------
+   NEURODETECT CLINICAL THEME - THESIS 2025
+   Aesthetic: Clean Medical / Modern SaaS
+   ------------------------------------------------------------------- */
+
+   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+   :root {
+       /* Color Palette */
+       --primary: #2563eb;       /* Royal Blue - Trust & Medical */
+       --primary-dark: #1e40af;
+       --primary-light: #eff6ff;
+       
+       --secondary: #64748b;     /* Slate Grey - Text */
+       --dark-bg: #0f172a;       /* Deep Navy - Sidebar */
+       --light-bg: #f8fafc;      /* Off-white - Body Background */
+       
+       --success: #10b981;
+       --danger: #ef4444;
+       --warning: #f59e0b;
+   
+       /* Dimensions */
+       --sidebar-width: 260px;
+       --header-height: 70px;
+       
+       /* Shadows & Radius */
+       --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+       --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+       --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+       --radius-md: 12px;
+       --radius-lg: 16px;
+   }
+   
+   /* --- GLOBAL RESET --- */
+   body {
+       background-color: var(--light-bg);
+       font-family: 'Inter', sans-serif;
+       color: #334155;
+       font-size: 0.95rem;
+       line-height: 1.6;
+       overflow-x: hidden;
+   }
+   
+   h1, h2, h3, h4, h5, h6 {
+       font-weight: 700;
+       color: #1e293b;
+       letter-spacing: -0.025em;
+   }
+   
+   a { text-decoration: none; }
+   
+   /* --- SIDEBAR NAVIGATION --- */
+   .sidebar {
+       width: var(--sidebar-width);
+       height: 100vh;
+       background-color: var(--dark-bg);
+       position: fixed;
+       top: 0;
+       left: 0;
+       display: flex;
+       flex-direction: column;
+       z-index: 100;
+       padding: 24px 16px;
+       transition: all 0.3s ease;
+       box-shadow: 4px 0 24px rgba(0,0,0,0.2);
+   }
+   
+   .sidebar-brand {
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       font-size: 1.25rem;
+       font-weight: 700;
+       color: white;
+       margin-bottom: 40px;
+       padding: 0 12px;
+   }
+   
+   .sidebar-menu-label {
+       font-size: 0.75rem;
+       text-transform: uppercase;
+       color: #64748b;
+       font-weight: 600;
+       letter-spacing: 0.05em;
+       margin-bottom: 8px;
+       padding-left: 12px;
+   }
+   
+   .nav-link {
+       display: flex;
+       align-items: center;
+       gap: 12px;
+       padding: 12px 16px;
+       color: #94a3b8;
+       border-radius: 8px;
+       margin-bottom: 4px;
+       font-weight: 500;
+       transition: all 0.2s;
+   }
+   
+   .nav-link:hover {
+       background-color: rgba(255,255,255,0.05);
+       color: white;
+   }
+   
+   .nav-link.active {
+       background-color: var(--primary);
+       color: white;
+       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+   }
+   
+   .sidebar-footer {
+       margin-top: auto;
+       padding-top: 20px;
+       border-top: 1px solid rgba(255,255,255,0.1);
+   }
+   
+   /* --- MAIN LAYOUT --- */
+   .main-content {
+       margin-left: var(--sidebar-width);
+       padding: 40px;
+       min-height: 100vh;
+   }
+   
+   .page-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: end;
+       margin-bottom: 32px;
+   }
+   
+   .page-title {
+       font-size: 1.8rem;
+       margin-bottom: 4px;
+   }
+   
+   .page-subtitle {
+       color: var(--secondary);
+       font-size: 0.95rem;
+   }
+   
+   /* --- CARDS & PANELS --- */
+   .medical-card {
+       background: white;
+       border-radius: var(--radius-lg);
+       box-shadow: var(--shadow-md);
+       border: 1px solid #e2e8f0;
+       overflow: hidden; /* Contains child elements */
+       margin-bottom: 24px;
+       transition: transform 0.2s ease, box-shadow 0.2s ease;
+   }
+   
+   .medical-card:hover {
+       transform: translateY(-2px);
+       box-shadow: var(--shadow-lg);
+   }
+   
+   .card-header-clean {
+       padding: 20px 24px;
+       border-bottom: 1px solid #f1f5f9;
+       font-weight: 600;
+       font-size: 1.1rem;
+       color: #334155;
+       background-color: white;
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+   }
+   
+   .card-body-clean {
+       padding: 24px;
+   }
+   
+   /* --- STATS CARDS (DASHBOARD) --- */
+   .stat-card {
+       background: white;
+       padding: 24px;
+       border-radius: var(--radius-lg);
+       box-shadow: var(--shadow-sm);
+       display: flex;
+       align-items: center;
+       border: 1px solid #e2e8f0;
+   }
+   
+   .stat-icon {
+       width: 56px;
+       height: 56px;
+       border-radius: 12px;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       font-size: 1.5rem;
+       margin-right: 20px;
+   }
+   
+   .stat-icon.blue { background: var(--primary-light); color: var(--primary); }
+   .stat-icon.red { background: #fee2e2; color: var(--danger); }
+   .stat-icon.green { background: #dcfce7; color: var(--success); }
+   
+   /* --- UPLOAD ZONE --- */
+   .upload-wrapper {
+       background-color: #f8fafc;
+       border: 2px dashed #cbd5e0;
+       border-radius: var(--radius-md);
+       padding: 60px;
+       text-align: center;
+       transition: all 0.3s ease;
+       cursor: pointer;
+       position: relative;
+   }
+   
+   .upload-wrapper:hover {
+       border-color: var(--primary);
+       background-color: var(--primary-light);
+   }
+   
+   .upload-input {
+       position: absolute;
+       top: 0; left: 0;
+       width: 100%; height: 100%;
+       opacity: 0;
+       cursor: pointer;
+   }
+   
+   /* --- CUSTOM TABLES --- */
+   .clinical-table {
+       width: 100%;
+       border-collapse: separate;
+       border-spacing: 0;
+   }
+   
+   .clinical-table th {
+       background-color: #f8fafc;
+       padding: 16px 24px;
+       font-size: 0.75rem;
+       text-transform: uppercase;
+       letter-spacing: 0.05em;
+       color: #64748b;
+       font-weight: 600;
+       border-bottom: 1px solid #e2e8f0;
+       text-align: left;
+   }
+   
+   .clinical-table td {
+       padding: 16px 24px;
+       border-bottom: 1px solid #f1f5f9;
+       vertical-align: middle;
+       color: #334155;
+   }
+   
+   .clinical-table tr:last-child td { border-bottom: none; }
+   .clinical-table tr:hover td { background-color: #f8fafc; }
+   
+   /* --- BADGES --- */
+   .badge-pill {
+       padding: 6px 12px;
+       border-radius: 50px;
+       font-size: 0.75rem;
+       font-weight: 600;
+       display: inline-block;
+   }
+   
+   .badge-danger { background: #fee2e2; color: #991b1b; }
+   .badge-success { background: #dcfce7; color: #166534; }
+   
+   /* --- BUTTONS --- */
+   .btn-clinical {
+       background-color: var(--primary);
+       color: white;
+       border: none;
+       padding: 12px 24px;
+       border-radius: 8px;
+       font-weight: 500;
+       transition: all 0.2s;
+       box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+   }
+   
+   .btn-clinical:hover {
+       background-color: var(--primary-dark);
+       transform: translateY(-1px);
+       color: white;
+   }
+   
+   .btn-outline {
+       background: transparent;
+       border: 1px solid #cbd5e0;
+       color: #64748b;
+       padding: 8px 16px;
+       border-radius: 6px;
+       transition: all 0.2s;
+   }
+   
+   .btn-outline:hover {
+       border-color: var(--primary);
+       color: var(--primary);
+   }
+   
+   /* --- LOGIN PAGE SPECIAL --- */
+   .login-container {
+       height: 100vh;
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+   }
+   
+   .login-card {
+       background: white;
+       width: 400px;
+       padding: 40px;
+       border-radius: 20px;
+       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+   }

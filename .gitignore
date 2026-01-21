@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual env
+venv/
+.venv/
+
+# OS
+.DS_Store
+
+# Databases
+*.sqlite3
+
+# Large datasets / generated data
+nilearn_data/
+bids_dataset/
+raw_clinical_data/
+derivatives/
+work/
+media/
+test_batch/
+
+# Model outputs
+*.nii
+*.nii.gz

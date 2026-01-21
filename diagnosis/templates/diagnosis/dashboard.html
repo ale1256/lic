@@ -1,0 +1,108 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="page-header">
+        <div>
+            <h2 class="page-title">Clinical Dashboard</h2>
+            <p class="page-subtitle">Overview of recent diagnostic activities and patient statistics.</p>
+        </div>
+        <a href="{% url 'upload' %}" class="btn-clinical">
+            <i class="fa-solid fa-plus me-2"></i> New Analysis
+        </a>
+    </div>
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0">{{ total_scans }}</h3>
+                    <small class="text-muted">Total Patients Analyzed</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon red">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0">{{ pd_count }}</h3>
+                    <small class="text-muted">PD Positive Cases</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-check-circle"></i>
+                </div>
+                <div>
+                    <h3 class="mb-0">98.2%</h3>
+                    <small class="text-muted">Model Accuracy</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="medical-card">
+        <div class="card-header-clean">
+            <span>Recent Patient History</span>
+            <button class="btn-outline btn-sm"><i class="fa-solid fa-filter me-2"></i>Filter Data</button>
+        </div>
+        <div class="card-body-clean p-0">
+            <div class="table-responsive">
+                <table class="clinical-table">
+                    <thead>
+                        <tr>
+                            <th>Patient ID</th>
+                            <th>Age</th>
+                            <th>Date</th>
+                            <th>AI Prediction</th>
+                            <th>Confidence</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in scans %}
+                        <tr>
+                            <td class="fw-bold" style="color: var(--primary);">{{ scan.patient_id }}</td>
+                            <td>{{ scan.age }} Yrs</td>
+                            <td>{{ scan.uploaded_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if scan.prediction == "Parkinson's Disease" %}
+                                    <span class="badge-pill badge-danger">PD Positive</span>
+                                {% else %}
+                                    <span class="badge-pill badge-success">Control</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="me-3 fw-bold">{{ scan.confidence }}%</span>
+                                    <div class="progress flex-grow-1" style="height: 4px; width: 60px; background-color: #e2e8f0; border-radius: 2px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ scan.confidence }}%; background-color: {% if scan.confidence > 80 %}#10b981{% else %}#f59e0b{% endif %};">
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-end">
+                                <a href="#" class="btn-outline btn-sm">Report</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block opacity-50"></i>
+                                No patient data found. Start a new analysis.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

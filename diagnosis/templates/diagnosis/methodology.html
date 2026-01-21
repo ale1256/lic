@@ -1,0 +1,30 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-body p-5">
+            <h2 class="mb-4">Methodology & Architecture</h2>
+            <p class="lead">This application leverages deep learning techniques on resting-state fMRI data to identify early biomarkers of Parkinson's Disease.</p>
+            
+            <hr class="my-4">
+
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <h4><i class="fa-solid fa-database me-2"></i> Data Acquisition</h4>
+                    <p>Data is sourced from the <strong>Parkinson's Progression Markers Initiative (PPMI)</strong>. The dataset consists of 4D resting-state fMRI scans preprocessed using the fMRIPrep pipeline.</p>
+                </div>
+                <div class="col-md-6">
+                    <h4><i class="fa-solid fa-brain me-2"></i> Feature Engineering</h4>
+                    <p>We extract Functional Connectivity (FC) matrices using the <strong>Nilearn</strong> library. This transforms the 4D time-series data into a correlation matrix representing brain region interactions.</p>
+                </div>
+            </div>
+
+            <div class="mt-5">
+                <h4><i class="fa-solid fa-network-wired me-2"></i> Classification Model</h4>
+                <p>The core classification engine is a Support Vector Machine (SVM) / 3D CNN trained on the FC matrices. The model achieves an accuracy of approximately <strong>XX%</strong> (to be updated after training) on the test set.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
