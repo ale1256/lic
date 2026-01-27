@@ -44,16 +44,22 @@ def analyze_fmri(file_path):
         
         # --- 4. Procesare Neurostiintifica (Nilearn) ---
         
+       # ... (în interiorul funcției analyze_fmri)
+
         print("   -> Incarcare atlas MSDL...")
         atlas = datasets.fetch_atlas_msdl()
 
-        # Configuram extractorul de semnal
+        # Configuram extractorul de semnal OPTIMIZAT
         masker = maskers.NiftiMapsMasker(
             maps_img=atlas.maps, 
-            standardize=True,      
-            memory='nilearn_cache', 
-            verbose=0
-        )
+            standardize=True,
+            memory=None,      # Dezactivează cache-ul (critic pentru fișiere mari)
+            resampling_target="mask", # <--- SALVAREA TA: Micșorează datele drastic
+            verbose=1
+)
+
+
+        # ... (restul codului rămâne la fel)
 
         # Extragem seriile de timp
         print("   -> Extragere serii de timp din datele fMRI...")

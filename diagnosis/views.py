@@ -23,6 +23,8 @@ def dashboard(request):
 def methodology(request):
     return render(request, 'diagnosis/methodology.html')
 
+# diagnosis/views.py
+
 @login_required
 def upload_scan(request):
     if request.method == 'POST' and request.FILES.get('scan_file'):
@@ -30,26 +32,30 @@ def upload_scan(request):
         age = request.POST.get('age')
         myfile = request.FILES['scan_file']
 
-        # Salvare inițială pentru a obține calea fișierului
         scan = PatientScan.objects.create(patient_id=p_id, age=age, scan_file=myfile)
         
-        # Analiză (aici se vor încărca nilearn/sklearn pentru prima dată)
-        pred, conf = analyze_fmri(scan.scan_file.path)
+        # Run analysis
+        pred, conf, viewer_path = analyze_fmri(scan.scan_file.path)
         
-        # Salvare rezultate
         scan.prediction = pred
         scan.confidence = conf
         scan.save()
 
-        return render(request, 'diagnosis/result.html', {'scan': scan})
+        # --- FIX: Generate the viewer URL explicitly ---
+        viewer_url = scan.scan_file.url.replace('.nii.gz', '_viewer.nii.gz').replace('.nii', '_viewer.nii')
+
+        return render(request, 'diagnosis/result.html', {'scan': scan, 'viewer_url': viewer_url})
 
     return render(request, 'diagnosis/upload.html')
 
 @login_required
 def view_result(request, scan_id):
     scan = PatientScan.objects.get(id=scan_id)
-    return render(request, 'diagnosis/result.html', {'scan': scan})
-
+    
+    # --- FIX: Generate the viewer URL here too ---
+    viewer_url = scan.scan_file.url.replace('.nii.gz', '_viewer.nii.gz').replace('.nii', '_viewer.nii')
+    
+    return render(request, 'diagnosis/result.html', {'scan': scan, 'viewer_url': viewer_url})
 @login_required
 def generate_pdf(request, scan_id):
     scan = PatientScan.objects.get(id=scan_id)

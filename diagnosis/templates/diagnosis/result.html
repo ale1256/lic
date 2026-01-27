@@ -112,7 +112,7 @@
 </div>
 
 <!-- Scripts -->
-<script src="https://niivue.github.io/niivue/features/niivue.umd.js"></script>
+<script src="https://unpkg.com/@niivue/niivue/dist/niivue.umd.js"></script>
 <script>
     let nv;
 
@@ -155,9 +155,11 @@
             });
             
             nv.attachTo('canvas');
+
+            const originalUrl = "{{ scan.scan_file.url }}";
+            const fileUrl = "{{ viewer_url }}";
             
-            const fileUrl = "{{ scan.scan_file.url }}";
-            console.log("Attempting to load MRI from:", fileUrl);
+            console.log("Attempting to load MRI from:", fileUrl)
 
             const volumeList = [
                 {
