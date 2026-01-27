@@ -162,15 +162,15 @@
             console.log("Attempting to load MRI from:", fileUrl)
 
             const volumeList = [
-                {
-                    url: fileUrl,
+            {
+                url: fileUrl,
                     colorMap: "gray",
                     opacity: 1,
                     visible: true,
-                    // Contrast fix for mock/processed data
+                    // FIX: Ensure these match the mock generator range (0-100)
                     cal_min: 0,
-                    cal_max: 150 
-                },
+                    cal_max: 100// This matches the scaling in the new create_mocks.py
+},
             ];
             
             nv.loadVolumes(volumeList).catch(err => {
@@ -187,7 +187,7 @@
     function loadStandardBrain() {
         console.log("Loading Standard MNI Brain for debugging...");
         const volumeList = [{
-            url: "https://niivue.github.io/niivue/images/mni152.nii.gz",
+            url: "/media/scans/test_standard.nii.gz",
             colorMap: "gray",
             opacity: 1,
             visible: true,
