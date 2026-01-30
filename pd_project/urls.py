@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('diagnosis.urls')),
     path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
     path('accounts/login/', auth_views.LogoutView.as_view(), name='logout'),
+    path('accounts/register/', views.register, name='register'),
     path('', views.dashboard, name='dashboard'), 
     path('upload/', views.upload_scan, name='upload'),
     path('methodology/', views.methodology, name='methodology'),
