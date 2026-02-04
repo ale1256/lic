@@ -26,3 +26,4 @@ test_batch/
 # Model outputs
 *.nii
 *.nii.gz
+serviceAccountKey.json
