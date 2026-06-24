@@ -1,28 +1,70 @@
 {% extends 'diagnosis/base.html' %}
 
 {% block content %}
-<div class="container">
-    <div class="card">
+<div class="container py-4">
+    <div class="medical-card shadow-sm border-0 mb-4">
+        <div class="card-header-clean bg-primary text-white p-4">
+            <h2 class="mb-0"><i class="fa-solid fa-microscope me-3"></i>Methodology & Pipeline Architecture</h2>
+        </div>
         <div class="card-body p-5">
-            <h2 class="mb-4">Methodology & Architecture</h2>
-            <p class="lead">This application leverages deep learning techniques on resting-state fMRI data to identify early biomarkers of Parkinson's Disease.</p>
-            
-            <hr class="my-4">
+            <p class="lead text-muted mb-5">
+                NeuroDetect utilizes advanced functional connectivity analysis on resting-state fMRI data 
+                to detect early-stage biomarkers of Parkinson's Disease with high clinical confidence.
+            </p>
 
-            <div class="row mt-5">
+            <div class="row g-4">
                 <div class="col-md-6">
-                    <h4><i class="fa-solid fa-database me-2"></i> Data Acquisition</h4>
-                    <p>Data is sourced from the <strong>Parkinson's Progression Markers Initiative (PPMI)</strong>. The dataset consists of 4D resting-state fMRI scans preprocessed using the fMRIPrep pipeline.</p>
+                    <div class="p-4 border rounded-4 h-100 bg-light">
+                        <h5 class="fw-bold text-primary mb-3">
+                            <i class="fa-solid fa-database me-2"></i> 1. Data Source
+                        </h5>
+                        <p class="small">
+                            Scans are sourced from the <strong>PPMI (Parkinson's Progression Markers Initiative)</strong>. 
+                            We utilize 4D NIfTI volumes which represent the blood-oxygen-level-dependent (BOLD) signal over time.
+                        </p>
+                    </div>
                 </div>
                 <div class="col-md-6">
-                    <h4><i class="fa-solid fa-brain me-2"></i> Feature Engineering</h4>
-                    <p>We extract Functional Connectivity (FC) matrices using the <strong>Nilearn</strong> library. This transforms the 4D time-series data into a correlation matrix representing brain region interactions.</p>
+                    <div class="p-4 border rounded-4 h-100 bg-light">
+                        <h5 class="fw-bold text-primary mb-3">
+                            <i class="fa-solid fa-brain me-2"></i> 2. Signal Extraction
+                        </h5>
+                        <p class="small">
+                            Using the <strong>MSDL Atlas</strong> and <strong>Nilearn</strong>, we extract time-series data from 39 
+                            functionally defined brain regions, focusing on the basal ganglia and cortical networks.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 border rounded-4 h-100 bg-light">
+                        <h5 class="fw-bold text-primary mb-3">
+                            <i class="fa-solid fa-draw-polygon me-2"></i> 3. Connectivity Analysis
+                        </h5>
+                        <p class="small">
+                            We calculate <strong>Tangent Space Connectivity</strong> matrices. Unlike simple correlation, tangent 
+                            embedding captures the underlying geometry of the connectivity manifold, improving group separation.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-4 border rounded-4 h-100 bg-light">
+                        <h5 class="fw-bold text-primary mb-3">
+                            <i class="fa-solid fa-bolt-lightning me-2"></i> 4. Machine Learning
+                        </h5>
+                        <p class="small">
+                            Classification is performed via a <strong>Support Vector Machine (SVM)</strong> with an RBF kernel, 
+                            optimized with Feature Selection (SelectKBest) to identify the most discriminative neural pathways.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="mt-5">
-                <h4><i class="fa-solid fa-network-wired me-2"></i> Classification Model</h4>
-                <p>The core classification engine is a Support Vector Machine (SVM) / 3D CNN trained on the FC matrices. The model achieves an accuracy of approximately <strong>XX%</strong> (to be updated after training) on the test set.</p>
+            <div class="mt-5 p-4 bg-dark text-white rounded-4">
+                <h5 class="fw-bold mb-3">Scientific Significance</h5>
+                <p class="mb-0 opacity-75">
+                    This automated pipeline reduces diagnostic subjectivity and provides neurologists with a quantitative 
+                    "Confidence Score" based on objective functional biomarkers rather than purely clinical observation.
+                </p>
             </div>
         </div>
     </div>

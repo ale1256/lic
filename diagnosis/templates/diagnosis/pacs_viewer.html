@@ -1,0 +1,36 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">PACS Viewer</h1>
+        <p class="page-subtitle">Embedded OHIF viewer (Orthanc DICOMweb).</p>
+    </div>
+    <div class="viewer-actions">
+        <a href="{{ viewer_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary">
+            Open in new tab
+        </a>
+    </div>
+</div>
+
+<div class="medical-card viewer-card">
+    <div class="card-header-clean">
+        <span>OHIF Embedded</span>
+        <span class="viewer-status">Source: {{ viewer_url }}</span>
+    </div>
+    <div class="card-body-clean viewer-body">
+        <iframe
+            class="viewer-iframe"
+            src="{{ viewer_url }}"
+            title="OHIF Viewer"
+            loading="lazy"
+            allowfullscreen
+        ></iframe>
+    </div>
+</div>
+
+<div class="viewer-hint">
+    <strong>If the viewer is blank:</strong> make sure Orthanc and OHIF are running,
+    then upload a full DICOM study into Orthanc (not NIfTI). Refresh this page after upload.
+</div>
+{% endblock %}

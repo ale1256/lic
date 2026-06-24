@@ -1,12 +1,18 @@
-{% extends 'diagnosis/base.html' %}{% block content %}<div class="container-fluid p-0"><!-- Header Section -->
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="container-fluid p-0 result-page">
     <div class="page-header d-flex justify-content-between align-items-center">
         <div>
             <h2 class="page-title">Raport Analiză Imagistică</h2>
-            <p class="page-subtitle">Evaluare diagnostică pentru Pacientul {{ scan.patient_id }}</p>
+            <p class="page-subtitle">Pacient {{ scan.patient_id }} • {{ scan.created_at|date:"d M Y - H:i" }}</p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex gap-2 flex-wrap">
             <a href="{% url 'generate_pdf' scan.id %}" class="btn-outline bg-white shadow-sm">
                 <i class="fa-solid fa-file-pdf me-2"></i>Descarcă PDF
+            </a>
+            <a href="{% url 'pacs_viewer' %}" class="btn btn-outline-primary shadow-sm">
+                <i class="fa-solid fa-x-ray me-2"></i>PACS Viewer
             </a>
             <a href="{% url 'upload' %}" class="btn-clinical shadow-sm">
                 <i class="fa-solid fa-bolt me-2"></i>Analiză Nouă
@@ -14,64 +20,63 @@
         </div>
     </div>
 
-    <!-- Stats Row -->
-    <div class="row mb-4">
-        <!-- Profil Pacient -->
-        <div class="col-md-4">
+    <div class="row g-4">
+        <div class="col-lg-4">
             <div class="medical-card h-100 shadow-sm border-0">
                 <div class="card-header-clean">
                     <span>Profil Pacient</span>
                     <i class="fa-solid fa-user-circle text-muted"></i>
                 </div>
                 <div class="card-body-clean">
-                    <h1 class="display-6 fw-bold mb-1" style="color: #1e293b;">{{ scan.patient_id }}</h1>
-                    <p class="text-muted mb-4">{{ scan.age }} Ani</p>
+                    <div class="result-patient-id">{{ scan.patient_id }}</div>
+                    <div class="text-muted mb-4">{{ scan.age }} ani</div>
 
-                    <div class="p-3 bg-light rounded-3 mb-3">
-                        <small class="text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">Fișier
-                            Procesat</small>
-                        <div class="d-flex align-items-center">
-                            <i class="fa-solid fa-file-medical text-primary me-2"></i>
-                            <span class="text-truncate small">{{ scan.scan_file.name }}</span>
+                    <div class="result-meta">
+                        <div class="result-meta-item">
+                            <span class="result-meta-label">Fișier procesat</span>
+                            <div class="result-meta-value">
+                                <i class="fa-solid fa-file-medical text-primary me-2"></i>
+                                <span class="text-truncate small">{{ scan.scan_file.name }}</span>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="p-3 bg-light rounded-3">
-                        <small class="text-uppercase text-muted fw-bold d-block mb-1" style="font-size: 0.7rem;">Data
-                            Diagnosticării</small>
-                        <div class="mt-1 small">{{ scan.created_at|date:"d M Y - H:i" }}</div>
+                        <div class="result-meta-item">
+                            <span class="result-meta-label">Data diagnosticării</span>
+                            <div class="result-meta-value small">{{ scan.created_at|date:"d M Y - H:i" }}</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Rezultate Model AI -->
-        <div class="col-md-8">
+        <div class="col-lg-8">
             <div class="medical-card h-100 shadow-sm border-0">
                 <div class="card-header-clean">
-                    <span>Inferență Model ML</span>
+                    <span>Rezultat Model</span>
                     <i class="fa-solid fa-robot text-muted"></i>
                 </div>
                 <div class="card-body-clean">
-                    <div class="row align-items-center h-100">
-                        <div class="col-md-6 text-center border-end">
-                            <h5 class="text-muted text-uppercase small fw-bold mb-4">Clasificare Finală</h5>
+                    <div class="row g-3 align-items-center">
+                        <div class="col-md-7">
+                            <div class="result-label">Clasificare Finală</div>
                             {% if scan.prediction == "Parkinson's Disease" %}
-                            <div class="badge-pill badge-danger mb-3 px-4 py-2">POZITIV DETECTAT</div>
-                            <h2 class="text-danger fw-bold mb-2">Boala Parkinson</h2>
+                            <div class="result-badge danger">Pozitiv detectat</div>
+                            <div class="result-title text-danger">Boala Parkinson</div>
                             {% else %}
-                            <div class="badge-pill badge-success mb-3 px-4 py-2">CONTROL SĂNĂTOS</div>
-                            <h2 class="text-success fw-bold mb-2">Healthy Control</h2>
+                            <div class="result-badge success">Control sănătos</div>
+                            <div class="result-title text-success">Healthy Control</div>
                             {% endif %}
-                            <p class="text-muted small px-3">Analiza bazată pe pattern-uri de conectivitate cerebrală.
-                            </p>
-                        </div>
-
-                        <div class="col-md-6 text-center">
-                            <div style="height: 180px; width: 100%; position: relative;">
-                                <canvas id="confidenceChart"></canvas>
+                            <div class="result-sub">Analiza este bazată pe pattern-uri de conectivitate fMRI.</div>
+                            <div class="result-severity">
+                                <span class="result-meta-label">Severitate estimată</span>
+                                <span class="result-severity-value">{{ scan.severity_stage }}</span>
                             </div>
-                            <p class="mt-3 small text-muted">Confidență: <strong>{{ scan.confidence }}%</strong></p>
+                        </div>
+                        <div class="col-md-5 text-center">
+                            <div class="confidence-wrap">
+                                <canvas id="confidenceChart"></canvas>
+                                <div class="confidence-value">{{ scan.confidence|default:0 }}%</div>
+                            </div>
+                            <div class="small text-muted mt-2">Scor de încredere</div>
                         </div>
                     </div>
                 </div>
@@ -79,120 +84,87 @@
         </div>
     </div>
 
-    <!-- Vizualizare 3D -->
-    <div class="row">
-        <div class="col-12">
-            <div class="medical-card shadow-lg border-0">
-                <div class="card-header-clean text-white"
-                    style="background: #0f172a; border: none; display: flex; justify-content: space-between; align-items: center;">
-                    <span><i class="fa-solid fa-cube me-2"></i> Vizualizator 3D Neuro-Interactiv</span>
-                    <div class="d-flex align-items-center">
-                        <span class="small opacity-75 me-3 d-none d-md-block">Scroll: Zoom | Click Stânga: Rotire</span>
-                        <button onclick="resetView()" class="btn btn-sm btn-outline-light py-0"
-                            style="font-size: 0.7rem;">Resetare</button>
-                    </div>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-6">
+            <div class="medical-card h-100 shadow-sm border-0">
+                <div class="card-header-clean">
+                    <span>Matrice Conectivitate</span>
+                    <i class="fa-solid fa-wave-square text-muted"></i>
                 </div>
-                <div class="card-body p-0 bg-black"
-                    style="height: 600px; position: relative; overflow: hidden; border-radius: 0 0 12px 12px;">
-                    <canvas id="gl" style="width: 100%; height: 100%;"></canvas>
+                <div class="card-body-clean">
+                    {% if scan.matrix_image %}
+                    <img src="{{ scan.matrix_image.url }}" alt="Matrice conectivitate" class="result-matrix">
+                    {% else %}
+                    <div class="result-empty">Matricea de conectivitate nu este disponibilă pentru acest caz.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="medical-card h-100 shadow-sm border-0">
+                <div class="card-header-clean">
+                    <span>Pași Următori</span>
+                    <i class="fa-solid fa-clipboard-check text-muted"></i>
+                </div>
+                <div class="card-body-clean">
+                    <div class="result-step">
+                        <div class="result-step-title">Vizualizare DICOM clară</div>
+                        <div class="result-step-text">Deschide PACS Viewer pentru explorare detaliată și calibrare window/level.</div>
+                        <a href="{% url 'pacs_viewer' %}" class="btn btn-outline-primary btn-sm mt-2">
+                            Deschide PACS Viewer
+                        </a>
+                    </div>
+                    <div class="result-divider"></div>
+                    <div class="result-step">
+                        <div class="result-step-title">Raportare</div>
+                        <div class="result-step-text">Generează PDF sau exportă CSV din Dashboard pentru arhivare.</div>
+                        <div class="d-flex gap-2 mt-2">
+                            <a href="{% url 'generate_pdf' scan.id %}" class="btn btn-outline-primary btn-sm">PDF</a>
+                            <a href="{% url 'export_data' %}" class="btn btn-outline-secondary btn-sm">CSV</a>
+                        </div>
+                    </div>
+                    <div class="result-divider"></div>
+                    <div class="result-step">
+                        <div class="result-step-title">Notă</div>
+                        <div class="result-step-text">Fișierul T1 influențează doar claritatea vizualizării, nu predicția ML.</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    // Define nv globally so the Reset button can access it
-    let nv; 
 
-    document.addEventListener('DOMContentLoaded', async () => {
-        // --- 1. Confidence Chart ---
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
         try {
             const confStr = "{{ scan.confidence|default:0 }}";
             const conf = parseFloat(confStr);
             const isPD = "{{ scan.prediction }}" === "Parkinson's Disease";
             const color = isPD ? '#ef4444' : '#10b981';
-            
+
             const chartCanvas = document.getElementById('confidenceChart');
-            if (chartCanvas) {
-                const ctx = chartCanvas.getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        datasets: [{
-                            data: [conf, 100 - conf],
-                            backgroundColor: [color, '#f1f5f9'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        cutout: '80%',
-                        plugins: { legend: { display: false } },
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-        } catch (e) { console.error("Chart Error:", e); }
+            if (!chartCanvas) return;
 
-        // --- 2. 3D Viewer (Niivue) ---
-        try {
-            // Check if library loaded via JSDelivr
-            if (typeof niivue === 'undefined') {
-                throw new Error("Niivue library failed to load from CDN.");
-            }
-
-            const canvas = document.getElementById('gl');
-            if (!canvas) {
-                throw new Error("Canvas element 'gl' not found in DOM.");
-            }
-
-            // Initialize Niivue
-            nv = new niivue.Niivue({
-                backColor: [0, 0, 0, 1],
-                show3Dcrosshair: true,
-                isSliceModel: true,
-                loadingText: 'Loading Brain Volume...'
+            const ctx = chartCanvas.getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [conf, Math.max(0, 100 - conf)],
+                        backgroundColor: [color, '#f1f5f9'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '78%',
+                    plugins: { legend: { display: false } },
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
             });
-
-            nv.attachTo('gl');
-
-            // Load Volume
-            const volumeList = [{
-                url: "{{ viewer_url }}",
-                colorMap: "gray",
-                opacity: 1,
-                visible: true
-            }];
-
-            await nv.loadVolumes(volumeList);
-            nv.setSliceType(nv.sliceTypeMultiplanar);
-
-            if (nv.volumes.length > 0) {
-                nv.volumes[0].cal_min = 0;
-                nv.drawScene();
-            }
-            
-        } catch (err) {
-            console.error("3D Viewer Error:", err);
-            const container = document.getElementById('gl')?.parentElement;
-            if (container) {
-                container.innerHTML = `
-                    <div class="d-flex flex-column align-items-center justify-content-center h-100 text-white p-4 text-center">
-                        <i class="fa-solid fa-triangle-exclamation fa-3x mb-3 text-warning"></i>
-                        <p class="mb-0">Error loading 3D Viewer.</p>
-                        <small class="opacity-50 mt-2">${err.message}</small>
-                    </div>
-                `;
-            }
+        } catch (e) {
+            console.error('Chart Error:', e);
         }
     });
-
-    // Reset View Button Function
-    function resetView() {
-        if (nv) {
-            nv.setSliceType(nv.sliceTypeMultiplanar);
-            nv.drawScene();
-        }
-    }
 </script>
 {% endblock %}

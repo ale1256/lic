@@ -24,5 +24,5 @@ clf = Pipeline([
 clf.fit(X_train, y_train)
 joblib.dump(clf, MODEL_PATH)
 
-print(f"✅ Model salvat cu succes la: {MODEL_PATH}")
+print(f" Model salvat cu succes la: {MODEL_PATH}")
 print(f"   Modelul este gata sa primeasca vectori de dimensiunea {n_features}.")

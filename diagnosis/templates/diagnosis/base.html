@@ -16,11 +16,10 @@
         
         <script src="{% static 'diagnosis/js/niivue.js' %}"></script>
         
-        <link rel="stylesheet" href="{% static 'diagnosis/style.css' %}">
+        <link rel="stylesheet" href="{% static 'diagnosis/style.css' %}?v=20260505-help-fix">
     </head>
 <body>
 
-    <!-- SIDEBAR -->
     <nav class="sidebar">
         <div class="sidebar-brand">
             <i class="fa-solid fa-brain text-primary"></i>
@@ -35,8 +34,14 @@
             <a href="{% url 'upload' %}" class="nav-link {% if request.resolver_match.url_name == 'upload' %}active{% endif %}">
                 <i class="fa-solid fa-microscope"></i> New Analysis
             </a>
+            <a href="{% url 'pacs_viewer' %}" class="nav-link {% if request.resolver_match.url_name == 'pacs_viewer' %}active{% endif %}">
+                <i class="fa-solid fa-x-ray"></i> PACS Viewer
+            </a>
             <a href="{% url 'methodology' %}" class="nav-link {% if request.resolver_match.url_name == 'methodology' %}active{% endif %}">
                 <i class="fa-solid fa-layer-group"></i> Methodology
+            </a>
+            <a href="{% url 'help' %}" class="nav-link {% if request.resolver_match.url_name == 'help' %}active{% endif %}">
+                <i class="fa-solid fa-circle-question"></i> Help
             </a>
         </div>
 
@@ -48,7 +53,6 @@
         </div>
     </nav>
 
-    <!-- MAIN CONTENT AREA -->
     <main class="main-content">
         {% block content %}{% endblock %}
     </main>

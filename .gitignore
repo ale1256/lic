@@ -1,30 +1,20 @@
-# Python
 __pycache__/
 *.pyc
-*.pyo
-*.pyd
 
-# Virtual env
-venv/
-.venv/
-
-# OS
-.DS_Store
-
-# Databases
-*.sqlite3
-
-# Large datasets / generated data
-nilearn_data/
-bids_dataset/
-raw_clinical_data/
-derivatives/
-work/
 media/
-test_batch/
+work/
+derivatives/
+nilearn_cache/
+nilearn_data/
 
-# Model outputs
+raw_images/
+folder_wit_pd/
+temp_extract/
+
 *.nii
 *.nii.gz
-serviceAccountKey.json
-serviceAccountKey.json
+*.dcm
+*.h5
+
+db.sqlite3
+*.pkl

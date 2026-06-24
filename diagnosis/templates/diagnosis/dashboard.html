@@ -2,100 +2,109 @@
 
 {% block content %}
 <div class="container-fluid p-0">
-    <div class="page-header">
+    <div class="page-header d-flex justify-content-between align-items-center">
         <div>
             <h2 class="page-title">Clinical Dashboard</h2>
-            <p class="page-subtitle">Overview of recent diagnostic activities and patient statistics.</p>
+            <p class="page-subtitle">Diagnostic overview and neurological patient distribution.</p>
         </div>
-        <a href="{% url 'upload' %}" class="btn-clinical">
-            <i class="fa-solid fa-plus me-2"></i> New Analysis
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{% url 'export_data' %}" class="btn-outline bg-white shadow-sm text-success border-success">
+                <i class="fa-solid fa-file-csv me-2"></i>Export Data
+            </a>
+            <a href="{% url 'upload' %}" class="btn-clinical">
+                <i class="fa-solid fa-plus me-2"></i> New Analysis
+            </a>
+        </div>
     </div>
+
     <div class="row mb-5">
         <div class="col-md-4">
-            <div class="stat-card">
-                <div class="stat-icon blue">
-                    <i class="fa-solid fa-users"></i>
-                </div>
+            <div class="stat-card shadow-sm border-0">
+                <div class="stat-icon blue"><i class="fa-solid fa-users"></i></div>
                 <div>
-                    <h3 class="mb-0">{{ total_scans }}</h3>
-                    <small class="text-muted">Total Patients Analyzed</small>
+                    <h3 class="mb-0 fw-bold">{{ total_scans }}</h3>
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Total Analyzed</small>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card">
-                <div class="stat-icon red">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
+            <div class="stat-card shadow-sm border-0">
+                <div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
                 <div>
-                    <h3 class="mb-0">{{ pd_count }}</h3>
-                    <small class="text-muted">PD Positive Cases</small>
+                    <h3 class="mb-0 fw-bold text-danger">{{ pd_cases }}</h3>
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">PD Positive Cases</small>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="stat-card">
-                <div class="stat-icon green">
-                    <i class="fa-solid fa-check-circle"></i>
-                </div>
+            <div class="stat-card shadow-sm border-0">
+                <div class="stat-icon green"><i class="fa-solid fa-shield-heart"></i></div>
                 <div>
-                    <h3 class="mb-0">98.2%</h3>
-                    <small class="text-muted">Model Accuracy</small>
+                    <h3 class="mb-0 fw-bold text-success">{{ accuracy }}</h3>
+                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.65rem;">Avg. Confidence</small>
                 </div>
             </div>
         </div>
     </div>
-    <div class="medical-card">
-        <div class="card-header-clean">
-            <span>Recent Patient History</span>
-            <button class="btn-outline btn-sm"><i class="fa-solid fa-filter me-2"></i>Filter Data</button>
+
+        <div class="medical-card shadow-sm border-0">
+        <div class="card-header-clean d-flex justify-content-between align-items-center">
+            <span class="fw-bold"><i class="fa-solid fa-list-ul me-2"></i>Patient Examination History</span>
+            <div class="d-flex gap-2">
+                <form method="get" action="{% url 'dashboard' %}" class="d-flex gap-2" id="patient-search-form">
+                    <input type="text" name="q" value="{{ query }}" class="form-control form-control-sm" placeholder="Search Patient ID..." id="patient-search-input" autocomplete="off">
+                </form>
+            </div>
         </div>
         <div class="card-body-clean p-0">
             <div class="table-responsive">
-                <table class="clinical-table">
+                <table class="clinical-table w-100">
                     <thead>
                         <tr>
                             <th>Patient ID</th>
                             <th>Age</th>
-                            <th>Date</th>
-                            <th>AI Prediction</th>
-                            <th>Confidence</th>
+                            <th>Exam Date</th>
+                            <th>Status</th>
+                            <th>Severity</th> <th>Confidence</th>
                             <th class="text-end">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="patient-table-body">
                         {% for scan in scans %}
-                        <tr>
-                            <td class="fw-bold" style="color: var(--primary);">{{ scan.patient_id }}</td>
+                        <tr data-patient-id="{{ scan.patient_id|default:'' }}">
+                            <td class="fw-bold" style="color: #2563eb;">{{ scan.patient_id }}</td>
                             <td>{{ scan.age }} Yrs</td>
-                            <td>{{ scan.uploaded_at|date:"M d, Y" }}</td>
+                            <td>{{ scan.created_at|date:"M d, Y" }}</td>
                             <td>
                                 {% if scan.prediction == "Parkinson's Disease" %}
-                                    <span class="badge-pill badge-danger">PD Positive</span>
+                                    <span class="badge-pill badge-danger">PD POSITIVE</span>
                                 {% else %}
-                                    <span class="badge-pill badge-success">Control</span>
+                                    <span class="badge-pill badge-success">CONTROL</span>
                                 {% endif %}
                             </td>
                             <td>
+                                <small class="text-muted fw-bold">{{ scan.severity_stage|default:"-" }}</small>
+                            </td>
+                            <td>
                                 <div class="d-flex align-items-center">
-                                    <span class="me-3 fw-bold">{{ scan.confidence }}%</span>
-                                    <div class="progress flex-grow-1" style="height: 4px; width: 60px; background-color: #e2e8f0; border-radius: 2px;">
-                                        <div class="progress-bar" role="progressbar" 
-                                             style="width: {{ scan.confidence }}%; background-color: {% if scan.confidence > 80 %}#10b981{% else %}#f59e0b{% endif %};">
-                                        </div>
+                                    <span class="me-2 fw-bold" style="min-width: 35px;">{{ scan.confidence|floatformat:0 }}%</span>
+                                    <div class="progress flex-grow-1" style="height: 6px; border-radius: 3px; background: #f1f5f9;">
+                                        <div class="progress-bar {% if scan.prediction == 'Parkinson\'s Disease' %}bg-danger{% else %}bg-success{% endif %}" 
+                                             style="width: {{ scan.confidence }}%;"></div>
                                     </div>
                                 </div>
                             </td>
                             <td class="text-end">
-                                <a href="#" class="btn-outline btn-sm">Report</a>
+                                <a href="{% url 'view_result' scan.id %}" class="btn btn-sm btn-outline-primary py-1 px-3">
+                                    <i class="fa-solid fa-file-waveform me-1"></i> Report
+                                </a>
                             </td>
                         </tr>
                         {% empty %}
-                        <tr>
-                            <td colspan="6" class="text-center py-5 text-muted">
-                                <i class="fa-solid fa-folder-open fa-2x mb-3 d-block opacity-50"></i>
-                                No patient data found. Start a new analysis.
+                        <tr class="empty-state-row">
+                            <td colspan="7" class="text-center py-5 text-muted">
+                                <i class="fa-solid fa-inbox fa-3x mb-3 opacity-20"></i>
+                                <p>No diagnostic data available. Please perform a new analysis.</p>
                             </td>
                         </tr>
                         {% endfor %}
@@ -105,4 +114,40 @@
         </div>
     </div>
 </div>
+<script>
+(() => {
+    const input = document.getElementById('patient-search-input');
+    const tbody = document.getElementById('patient-table-body');
+    if (!input || !tbody) return;
+
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => !r.classList.contains('empty-state-row'));
+    const emptyRow = tbody.querySelector('.empty-state-row');
+
+    const applyFilter = () => {
+        const q = input.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const pid = (row.getAttribute('data-patient-id') || '').toLowerCase();
+            const match = q === '' || pid.includes(q);
+            row.style.display = match ? '' : 'none';
+            if (match) visibleCount += 1;
+        });
+
+        if (emptyRow) {
+            if (rows.length === 0 || visibleCount === 0) {
+                emptyRow.style.display = '';
+                emptyRow.querySelector('p').textContent = rows.length === 0
+                    ? 'No diagnostic data available. Please perform a new analysis.'
+                    : 'No patients match your search.';
+            } else {
+                emptyRow.style.display = 'none';
+            }
+        }
+    };
+
+    input.addEventListener('input', applyFilter);
+    applyFilter();
+})();
+</script>
 {% endblock %}

@@ -1,0 +1,376 @@
+{% extends 'diagnosis/base.html' %}
+
+{% block content %}
+<div class="container-fluid help-page">
+    <div class="medical-card help-hero">
+        <div class="help-hero-inner">
+            <div class="help-hero-content">
+                <div class="help-eyebrow">Ghid interactiv</div>
+                <h1 class="page-title">Cum folosești NeuroDetect, pas cu pas</h1>
+                <p class="page-subtitle">
+                    În 5-7 minute poți încărca un fMRI, rula modelul și genera un raport clinic. 
+                    Bifează pașii pe parcurs și urmărește progresul.
+                </p>
+                <div class="help-hero-actions">
+                    <a href="{% url 'upload' %}" class="btn-clinical">Începe o analiză</a>
+                    <button type="button" class="btn btn-outline-light help-scroll" data-scroll="#help-steps">
+                        Vezi pașii
+                    </button>
+                </div>
+            </div>
+            <div class="help-hero-card">
+                <div class="help-kpi">
+                    <div>
+                        <div class="help-kpi-label">Timp estimat</div>
+                        <div class="help-kpi-value">5-7 min</div>
+                    </div>
+                    <i class="fa-solid fa-stopwatch"></i>
+                </div>
+                <div class="help-kpi">
+                    <div>
+                        <div class="help-kpi-label">Formate acceptate</div>
+                        <div class="help-kpi-value">.nii / .nii.gz</div>
+                    </div>
+                    <i class="fa-solid fa-file-medical"></i>
+                </div>
+                <div class="help-kpi">
+                    <div>
+                        <div class="help-kpi-label">Rezultat</div>
+                        <div class="help-kpi-value">Predicție + scor</div>
+                    </div>
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4" id="help-steps">
+        <div class="col-lg-7">
+            <div class="medical-card">
+                <div class="card-header-clean help-progress-header">
+                    <div>
+                        <i class="fa-solid fa-map-location-dot text-primary me-2"></i>
+                        Ghid rapid în 6 pași
+                    </div>
+                    <div class="help-progress-wrap">
+                        <span class="help-progress-text">0/6 completat</span>
+                        <div class="help-progress">
+                            <div class="help-progress-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="1">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">Deschide meniul „New Analysis”</span>
+                        </label>
+                        <p class="help-step-desc">Din sidebar, mergi la secțiunea de încărcare pentru a porni o analiză nouă.</p>
+                    </div>
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="2">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">Completează Patient ID și vârsta</span>
+                        </label>
+                        <p class="help-step-desc">Folosește un ID consecvent (ex. PAT-001) ca să găsești ușor cazul în Dashboard.</p>
+                    </div>
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="3">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">Încarcă fișierul fMRI (.nii/.nii.gz)</span>
+                        </label>
+                        <p class="help-step-desc">Fișierul fMRI este obligatoriu pentru inferență și scorul de încredere.</p>
+                    </div>
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="4">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">(Opțional) Încarcă T1 pentru un viewer mai clar</span>
+                        </label>
+                        <p class="help-step-desc">T1 îmbunătățește vizualizarea 3D, fără să schimbe predicția modelului.</p>
+                    </div>
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="5">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">Rulează modelul și analizează rezultatul</span>
+                        </label>
+                        <p class="help-step-desc">Pe pagina rezultat vezi predicția, scorul și severitatea estimată.</p>
+                    </div>
+                    <div class="help-step">
+                        <label class="help-check">
+                            <input type="checkbox" class="help-step-checkbox" data-step="6">
+                            <span class="help-checkmark"></span>
+                            <span class="help-step-title">Generează raportul PDF sau exportă CSV</span>
+                        </label>
+                        <p class="help-step-desc">Folosește butoanele de raport sau export pentru documentare și analiză în Excel.</p>
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="reset-steps">
+                            Resetează checklistul
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary btn-sm">Vezi Dashboard</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-wand-magic-sparkles text-primary me-2"></i>
+                        Tur interactiv: ce se întâmplă în spate
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <div class="help-tabs">
+                        <button type="button" class="help-tab active" data-tab="upload">Upload</button>
+                        <button type="button" class="help-tab" data-tab="processing">Procesare</button>
+                        <button type="button" class="help-tab" data-tab="analysis">Analiză</button>
+                        <button type="button" class="help-tab" data-tab="report">Raportare</button>
+                    </div>
+                    <div class="help-tab-panels">
+                        <div class="help-tab-panel active" data-panel="upload">
+                            <h5>Încărcare sigură</h5>
+                            <p>Fișierele sunt validate și salvate pentru cazul curent. T1 este folosit doar pentru viewer.</p>
+                            <div class="help-pill"><i class="fa-solid fa-shield-halved me-2"></i>GDPR & HIPAA ready</div>
+                        </div>
+                        <div class="help-tab-panel" data-panel="processing">
+                            <h5>Pre-procesare automată</h5>
+                            <p>Sistemul pregătește volumele pentru a obține conectivitatea funcțională.</p>
+                            <div class="help-pill"><i class="fa-solid fa-gear me-2"></i>Pipeline standardizat</div>
+                        </div>
+                        <div class="help-tab-panel" data-panel="analysis">
+                            <h5>Inferență AI</h5>
+                            <p>Modelul calculează predicția și scorul de încredere, plus stadiul severității.</p>
+                            <div class="help-pill"><i class="fa-solid fa-brain me-2"></i>Scor clinic explicabil</div>
+                        </div>
+                        <div class="help-tab-panel" data-panel="report">
+                            <h5>Raportare și export</h5>
+                            <p>Generezi PDF clinic sau CSV pentru analiză longitudinală.</p>
+                            <div class="help-pill"><i class="fa-solid fa-file-pdf me-2"></i>PDF profesional</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-circle-question text-primary me-2"></i>
+                        Întrebări frecvente
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <button type="button" class="help-accordion">Ce formate acceptă platforma?</button>
+                    <div class="help-accordion-panel">
+                        <p>Acceptă fișiere NIfTI: <strong>.nii</strong> și <strong>.nii.gz</strong>. Formatul .gz este recomandat pentru upload mai rapid.</p>
+                    </div>
+
+                    <button type="button" class="help-accordion">T1 influențează predicția?</button>
+                    <div class="help-accordion-panel">
+                        <p>Nu. T1 este folosit doar pentru o vizualizare 3D mai clară, predicția rămâne bazată pe fMRI.</p>
+                    </div>
+
+                    <button type="button" class="help-accordion">Unde găsesc toate cazurile?</button>
+                    <div class="help-accordion-panel">
+                        <p>În Dashboard poți căuta după Patient ID și poți vedea istoricul complet al analizelor.</p>
+                    </div>
+
+                    <button type="button" class="help-accordion">Cum interpretez scorul de încredere?</button>
+                    <div class="help-accordion-panel">
+                        <p>Scorul indică nivelul de certitudine al modelului. Un procent mai mare înseamnă o clasificare mai robustă.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-bolt text-primary me-2"></i>
+                        Scurtături utile
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <a class="help-quick-link" href="{% url 'upload' %}">
+                        <span><i class="fa-solid fa-microscope"></i> Pornește o analiză</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a class="help-quick-link" href="{% url 'dashboard' %}">
+                        <span><i class="fa-solid fa-chart-pie"></i> Vezi toate cazurile</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a class="help-quick-link" href="{% url 'methodology' %}">
+                        <span><i class="fa-solid fa-layer-group"></i> Metodologie</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    <a class="help-quick-link" href="{% url 'export_data' %}">
+                        <span><i class="fa-solid fa-file-csv"></i> Exportă CSV</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-lightbulb text-primary me-2"></i>
+                        Sfaturi pentru rezultate mai bune
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <div class="help-tip">
+                        <i class="fa-solid fa-check"></i>
+                        Folosește un Patient ID unic pentru fiecare pacient.
+                    </div>
+                    <div class="help-tip">
+                        <i class="fa-solid fa-check"></i>
+                        Încarcă fișiere comprimate (.nii.gz) pentru upload mai rapid.
+                    </div>
+                    <div class="help-tip">
+                        <i class="fa-solid fa-check"></i>
+                        Adaugă T1 dacă vrei o vizualizare 3D clară în viewer.
+                    </div>
+                    <div class="help-tip">
+                        <i class="fa-solid fa-check"></i>
+                        Folosește exportul CSV pentru analiză longitudinală în Excel.
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-vial text-primary me-2"></i>
+                        Mic test rapid
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <div class="help-quiz">
+                        <div class="help-quiz-question">Când folosești fișierul T1?</div>
+                        <div class="help-quiz-options">
+                            <button type="button" data-answer="correct">Pentru o vizualizare 3D mai clară</button>
+                            <button type="button" data-answer="wrong">Pentru a schimba predicția modelului</button>
+                        </div>
+                        <div class="help-quiz-feedback">Alege un răspuns pentru feedback instant.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="medical-card">
+                <div class="card-header-clean">
+                    <div>
+                        <i class="fa-solid fa-life-ring text-primary me-2"></i>
+                        Ai nevoie de ajutor?
+                    </div>
+                </div>
+                <div class="card-body-clean">
+                    <p class="mb-3">Dacă întâmpini erori la upload sau rezultate neobișnuite, verifică formatul fișierelor și încearcă din nou.</p>
+                    <p class="mb-0">Poți reveni aici oricând pentru un refresher rapid.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.querySelectorAll('.help-step-checkbox');
+        const progressBar = document.querySelector('.help-progress-bar');
+        const progressText = document.querySelector('.help-progress-text');
+        const resetButton = document.getElementById('reset-steps');
+
+        const updateProgress = () => {
+            const total = checkboxes.length;
+            const done = Array.from(checkboxes).filter((cb) => cb.checked).length;
+            const percent = total ? Math.round((done / total) * 100) : 0;
+            progressBar.style.width = `${percent}%`;
+            progressText.textContent = `${done}/${total} completat`;
+        };
+
+        checkboxes.forEach((checkbox) => {
+            checkbox.addEventListener('change', updateProgress);
+        });
+
+        if (resetButton) {
+            resetButton.addEventListener('click', () => {
+                checkboxes.forEach((checkbox) => {
+                    checkbox.checked = false;
+                });
+                updateProgress();
+            });
+        }
+
+        updateProgress();
+
+        const tabs = document.querySelectorAll('.help-tab');
+        const panels = document.querySelectorAll('.help-tab-panel');
+
+        tabs.forEach((tab) => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                tabs.forEach((item) => item.classList.remove('active'));
+                tab.classList.add('active');
+
+                panels.forEach((panel) => {
+                    panel.classList.toggle('active', panel.dataset.panel === target);
+                });
+            });
+        });
+
+        const accordions = document.querySelectorAll('.help-accordion');
+        accordions.forEach((button) => {
+            button.addEventListener('click', () => {
+                button.classList.toggle('open');
+                const panel = button.nextElementSibling;
+                if (!panel) {
+                    return;
+                }
+                if (panel.style.maxHeight) {
+                    panel.style.maxHeight = null;
+                } else {
+                    panel.style.maxHeight = `${panel.scrollHeight}px`;
+                }
+            });
+        });
+
+        const quizzes = document.querySelectorAll('.help-quiz');
+        quizzes.forEach((quiz) => {
+            const feedback = quiz.querySelector('.help-quiz-feedback');
+            const options = quiz.querySelectorAll('button[data-answer]');
+            options.forEach((option) => {
+                option.addEventListener('click', () => {
+                    const isCorrect = option.dataset.answer === 'correct';
+                    options.forEach((btn) => {
+                        btn.classList.remove('selected', 'correct', 'incorrect');
+                    });
+                    option.classList.add('selected', isCorrect ? 'correct' : 'incorrect');
+                    if (feedback) {
+                        feedback.textContent = isCorrect
+                            ? 'Corect! T1 este pentru claritatea vizualizării.'
+                            : 'Nu chiar. T1 nu schimbă predicția, ci doar claritatea viewer-ului.';
+                        feedback.classList.toggle('good', isCorrect);
+                        feedback.classList.toggle('bad', !isCorrect);
+                    }
+                });
+            });
+        });
+
+        const scrollButtons = document.querySelectorAll('[data-scroll]');
+        scrollButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                const target = button.getAttribute('data-scroll');
+                const element = document.querySelector(target);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

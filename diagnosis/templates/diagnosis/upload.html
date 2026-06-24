@@ -6,7 +6,7 @@
         
         <div class="text-center mb-5">
             <h2 class="mb-2">New Diagnostic Analysis</h2>
-            <p class="text-muted">Upload preprocessed fMRI (NIfTI) data for deep learning inference.</p>
+            <p class="text-muted">Upload fMRI for inference.</p>
         </div>
 
         <div class="medical-card">
@@ -25,8 +25,8 @@
                         </div>
                     </div>
 
-                    <div class="mb-5">
-                        <label class="form-label text-uppercase small fw-bold text-muted mb-2">MRI Scan File</label>
+                    <div class="mb-4">
+                        <label class="form-label text-uppercase small fw-bold text-muted mb-2">fMRI File (Required)</label>
                         <div class="upload-wrapper">
                             <input type="file" name="scan_file" accept=".nii,.nii.gz,.gz" class="upload-input" style="z-index: 10;" required onchange="document.getElementById('filename-display').innerText = this.files[0].name; document.getElementById('upload-icon').classList.replace('text-secondary', 'text-primary');">
                             
